@@ -19,9 +19,9 @@ download_game_data <- function(saves, api_key, values) {
         "&format=json"
       )
     )
-    d <- httr::content(r) %>%
-      purrr::map_df(purrr::flatten_df) %>%
-      dplyr::mutate(session = i) %>%
+    d <- httr::content(r) |> 
+      purrr::map_df(purrr::flatten_df) |> 
+      dplyr::mutate(session = i) |> 
       dplyr::mutate(dplyr::across(all_of(values), as.numeric))
     dfs[[i]] <- d
   }

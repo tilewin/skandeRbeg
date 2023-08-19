@@ -6,8 +6,8 @@
 #' @return A dataframe
 #' @export
 remove_tags <- function(df, tag_removal_df) {
-  df_filtered <- df %>%
-    dplyr::left_join(tag_removal, by = "tag") %>%
+  df_filtered <- df |> 
+    dplyr::left_join(tag_removal, by = "tag") |> 
     dplyr::filter(
       session >= remove_until |
       is.na(remove_until)
@@ -24,8 +24,8 @@ remove_tags <- function(df, tag_removal_df) {
 #' @return A dataframe
 #' @export
 switch_tags <- function(df, tag_switch_df) {
-  df_filtered <- df %>%
-    dplyr::left_join(tag_switch_df, by = "tag") %>%
+  df_filtered <- df |> 
+    dplyr::left_join(tag_switch_df, by = "tag") |> 
     dplyr::mutate(tag = ifelse(is.na(new_tag), tag, new_tag))
   return(df_filtered)
 }
