@@ -23,6 +23,7 @@ extract_colours <- function(df) {
 #' @export
 clean_labels <- function(df) {
   label_df <- df |> 
+    group_by(tag) |> 
     mutate(label = ifelse(session == max(session), tag, NA))
   return(label_df)
 }
@@ -35,32 +36,60 @@ clean_labels <- function(df) {
 #' @param metric_string 
 #' @param file_path
 #'
-#' @return A saved plot of the per-tag session history for that metric
+#' @return A plot of the per-tag session history for that metric
 #' @export
-plot_session_history <- function(df, metric, metric_string, file_path) {
-  ggplot(df, aes(x = session, y = {{ metric }}, colour = tag, group = tag)) +
+plot_session_history <- function(df, metric, metric_string) {
+  p <- ggplot(df, aes(x = session, y = {{ metric }}, colour = tag, group = tag)) +
     geom_line(linewidth = 0.7) +
     geom_point() +
-    geom_text_repel(
+    ggrepel::geom_text_repel(
       data = clean_labels(df),
-      aes(label = label), 
-      nudge_x = 0.1, 
-      na.rm = TRUE, 
-      hjust = 0, 
-      size = 2,
-      min.segment.length = 0, 
-      direction = "y", 
-      force = 0.01, 
+      aes(label = label),
+      nudge_x = 0.1,
+      na.rm = TRUE,
+      hjust = 0,
+      size = 2.5,
+      min.segment.length = 0,
+      direction = "y",
+      force = 0.01,
       force_pull = 10
     ) +
-    scale_x_discrete(expand = expansion(mult = c(0, 0), add = c(0.1, 0.4))) +
+    scale_x_continuous(expand = expansion(mult = c(0, 0), add = c(0.1, 0.8))) +
     scale_colour_manual(values = extract_colours(df)) +
     theme_bw() +
-    theme(legend.position = "none") +
+    theme(
+      legend.position = "none",
+      plot.title.position = "plot",
+      text = element_text(size = 9)
+    ) +
     labs(
       x = "Session",
-      y = metric_string
+      title = metric_string,
+      y = NULL
     ) +
-    scale_y_continuous(label=scales::comma)
-  ggsave(filename = paste0(file_path, metric_string, ".png"))
+    scale_y_continuous(label = scales::comma)
+  
+  return(p)
+}
+
+#' Save the session plot to disk in phone format
+#'
+#' @param plot A plot object created by plot_session_history()
+#' @param file_path A folder to save the plot to
+#' @param file_name The name of the file to save as .png 
+
+#' @export
+save_plot <- function(plot, file_path, file_name) {
+  ggsave(
+    plot = plot,
+    filename = paste0(file_path, file_name, ".png"), 
+    width = 2.8, 
+    height = 5.8, 
+    dpi = "retina")
+}
+
+plot_and_save <- function(df, metric, metric_string, file_path) {
+  df |> 
+    plot_session_history(metric = {{ metric }}, metric_string = metric_string) |> 
+    save_plot(file_path = file_path, file_name = metric_string)
 }

@@ -4,7 +4,7 @@
 \alias{plot_session_history}
 \title{Plot the session history for a metric}
 \usage{
-plot_session_history(df, metric, metric_string, file_path)
+plot_session_history(df, metric, metric_string)
 }
 \arguments{
 \item{df}{}
@@ -14,7 +14,7 @@ plot_session_history(df, metric, metric_string, file_path)
 \item{file_path}{}
 }
 \value{
-A saved plot of the per-tag session history for that metric
+A plot of the per-tag session history for that metric
 }
 \description{
 Plot the session history for a metric

@@ -5,13 +5,23 @@
 #'
 #' @return A dataframe
 #' @export
-remove_tags <- function(df, tag_removal_df) {
+remove_tags <- function(df, tag_removal_df, players_only = TRUE) {
+  if(players_only) {
+    was_player <- df |> 
+      filter(was_player == "Yes") %>%
+      select(tag) %>%
+      distinct()
+
+    df <- inner_join(df, was_player)
+  }
+  
   df_filtered <- df |> 
     dplyr::left_join(tag_removal, by = "tag") |> 
     dplyr::filter(
       session >= remove_until |
       is.na(remove_until)
     )
+
   return(df_filtered)
 }
 
