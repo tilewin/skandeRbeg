@@ -8,8 +8,8 @@
 remove_tags <- function(df, tag_removal_df, players_only = TRUE) {
   if(players_only) {
     was_player <- df |> 
-      filter(was_player == "Yes") %>%
-      select(tag) %>%
+      filter(was_player == "Yes") |>
+      select(tag) |>
       distinct()
 
     df <- inner_join(df, was_player)
